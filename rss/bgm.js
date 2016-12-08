@@ -104,10 +104,11 @@ function listAll() {
       latest: feeds.length > 0 ? feeds[0].title : 'Yet'
     }
   })
-  for(let bgm of bgms) {
-    print(`Name  : ${bgm.name}`)
-    print(`RSS   : ${bgm.rss}`)
-    print(`Latest: ${bgm.latest}`)
+  for(let {name, rss, latest} of bgms) {
+    print(`Name  : ${name}`)
+    print(`RSS   : ${rss}`)
+    print(`Latest: ${latest}`)
+    print()
   }
 }
 
