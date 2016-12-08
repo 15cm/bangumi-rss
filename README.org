@@ -46,7 +46,7 @@ aria2-dropbox/aria2-dropbox.js
 # pm2 start aria2-dropbox/aria2-dropbox.js
 #+END_SRC
 
-*Remember to configure [[https://github.com/andreafabrizi/Dropbox-Uploader][Dropbox-Uploader]] first. Check paths and aria2 in conf.json are correct!*
+*Remember to configure [[https://github.com/andreafabrizi/Dropbox-Uploader][Dropbox-Uploader]] first. Make sure that paths and aria2 in conf.json are correct!*
 ** Screenshots
 [[./screenshot.png]]
 ** Similar Projects
