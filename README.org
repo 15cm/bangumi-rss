@@ -1,0 +1,54 @@
+* Bangumi RSS
+Bangumi RSS is a CLI tool to subscript bangumi with rss. It focus on building a workflow to auto-download bangumi(especially in Raw) on a server.
+
+** Feature
+*** Bangumi RSS
+- Subscribe/unsubscribe bangumi using rss
+- Support RSS feed in this format:
+#+BEGIN_SRC xml
+  <item>
+    <title>bangumi name</title>
+    <link>bangumi download link</link>
+  </item>
+#+END_SRC
+- List all bangumi or details of given bangumi
+- Auto send new feeds to Aria2
+- Scheduled job to check new feeds with cron format instructions
+ 
+It works almost the same as below IFTTT workflow:
+*If new feeds found, then make a HTTP request with Aria2 RPC interface*
+*** Aria2 Dropbox(Optional)
+- If new download task finished in Aria2, then upload it to dropbox
+
+It is a substitute for btsync because in China, dropbox works quite well with proxy.
+** Prerequisite
+- Node.js with ES6 support(Class and Arrow Function)
+- [[https://github.com/andreafabrizi/Dropbox-Uploader][Dropbox-Uploader]]
+- pm2(recommended)
+** Installation
+*macOS / Linux / Windows:*
+#+BEGIN_SRC shell
+  git clone https://github.com/15cm/bangumi-rss.git
+  cd bangumi-rss
+  npm install
+  ln -s $(pwd)/rss/bamgumi-rss.js /usr/local/bin/bangumi-rss #For *nix. alias ok as well
+#+END_SRC
+** Usage
+Modify ~rss/conf-example.json~ and ~aria2-dropbox/conf-example.json~. Then rename them to ~conf.json~.
+*** Bangumi RSS
+Just run ~rss/bangumi-rss.js help~ or ~bangumi-rss help~
+
+It is recommended to run *bangumi-rss schedule* as a service with [[https://github.com/Unitech/pm2][pm2]]
+*** Aria2 Dropbox
+Listen for Aria2 events:
+#+BEGIN_SRC shell
+aria2-dropbox/aria2-dropbox.js
+# pm2 start aria2-dropbox/aria2-dropbox.js
+#+END_SRC
+
+*Remember to configure [[https://github.com/andreafabrizi/Dropbox-Uploader][Dropbox-Uploader]] first. Check paths and aria2 in conf.json are correct!*
+** Screenshots
+[[./screenshot.png]]
+** Similar Projects
+- [[https://github.com/yaqinking/DMHY][DHMY]]: For macOS users who would like to subscribe and auto-download bangumi with GUI on their Mac.
+- [[https://github.com/RicterZ/BGmi][BGmi]]: May be preferable if you watch bangumi released by CHS subs.
