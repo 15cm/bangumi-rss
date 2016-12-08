@@ -8,23 +8,18 @@ const schedule = require('node-schedule')
 const _ = require('lodash')
 const argv = require('yargs')
       .usage('Usage: $0 <command> [args]')
+      .boolean('nd')
+      .describe('nd', "Not download. '--nd' means not send new feeds to Aria2")
       .command('add <name> <rss>', 'Add a bangumi with rss url', {}, argv => bgm.add(argv.name, argv.rss))
       .example('$0 add oc9 \'https://www.nyaa.se/?page=rss&term=Horriblesubs+Occultic;Nine+(1080p)\'')
       .command('remove <name>', 'Remove a bangumi', {}, argv => bgm.remove(argv.name))
       .example('$0 remove oc9')
-      .command('check [name]', 'Check new feeds for bangumi[s]', {}, argv => {
+      .command('check [name] [option]', 'Check new feeds for bangumi[s]', {}, argv => {
+        var isDownload = !argv.nd
         if(argv.name) {
-          bgm.check(argv.name).then(feeds => {
-            sendToAria2(feeds)
-          }).catch(err => {
-            print(err)
-          })
+          checkFeed(argv.name, isDownload)
         } else {
-          bgm.checkAll().then(res => {
-            _.each(res, feeds => sendToAria2(feeds))
-          }).catch(err => {
-            print(err)
-          })
+          checkFeedAll(isDownload)
         }
       })
       .example('$0 check oc9')
@@ -36,22 +31,21 @@ const argv = require('yargs')
         }
       })
       .example('$0 list oc9')
-      .command('schedule [cron]',
-               'Schedule job of checking all new feeds with cron format (Recommend to launch using "pm2")',
-               {},
+      .command('schedule [cron] [option]',
+               'Schedule job of checking all new feeds with cron format(Default: check every 30 min)',
+               {
+                 cron: { default:  "* /30 * * * *" }
+               },
                argv => {
-                 var defaultValue = '* /30 * * * *'
-                 print(`Schedule job: ${argv.cron || defaultValue}`)
-                 var j = schedule.scheduleJob(argv.cron || defaultValue, () => {
+                 var isDownload = !argv.nd
+                 print(`Scheduled checking: ${argv.cron}`)
+                 print(`Send to Aria2: ${isDownload}`)
+                 var j = schedule.scheduleJob(argv.cron, () => {
                    print(`Scheduled checking run at ${(new Date()).toUTCString()}`)
-                   bgm.checkAll().then(res => {
-                     _.each(res, feeds => sendToAria2(feeds))
-                   }).catch(err => {
-                     print(err)
-                   })
+                   checkFeedAll(isDownload)
                  })
                })
-      .example('$0 schedule "* /30 * * * *"')
+      .example('$0 schedule')
       .epilog('copyright 15cm')
       .demand(1)
       .help()
@@ -68,5 +62,21 @@ function sendToAria2(feeds) {
       }).catch(err => {
         print(err)
       })
+  })
+}
+
+function checkFeed(bgnName, isDownload = true) {
+  bgm.check(bgmName).then(feeds => {
+    if(isDownload) sendToAria2(feeds)
+  }).catch(err => {
+    print(err)
+  })
+}
+
+function checkFeedAll(isDownload = true) {
+  bgm.checkAll().then(res => {
+    if(isDownload) _.each(res, feeds => sendToAria2(feeds))
+  }).catch(err => {
+    print(err)
   })
 }
