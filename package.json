@@ -1,0 +1,20 @@
+{
+  "name": "bangumi-rss",
+  "version": "0.1.0",
+  "description": "A CLI Tool to subscribe bangumis with rss",
+  "main": "",
+  "scripts": {
+    "run": "./rss/bangumi-rss.js schedule"
+  },
+  "author": "15cm",
+  "license": "ISC",
+  "dependencies": {
+    "aria2": "^3.0.0",
+    "cheerio": "^0.22.0",
+    "lodash": "^4.17.2",
+    "lowdb": "^0.14.0",
+    "node-schedule": "^1.2.0",
+    "request": "^2.79.0",
+    "yargs": "^6.5.0"
+  }
+}
