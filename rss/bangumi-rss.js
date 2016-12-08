@@ -2,6 +2,7 @@
 
 const print = console.log
 const fs = require('fs')
+const path = require('path')
 const bgm = require('./bgm.js')
 const Aria2 = require('aria2')
 const schedule = require('node-schedule')
@@ -51,7 +52,7 @@ const argv = require('yargs')
       .help()
       .argv
 
-var config = JSON.parse(fs.readFileSync('./conf.json', 'utf8'))
+var config = JSON.parse(fs.readFileSync(path.join(__dirname,'conf.json'), 'utf8'))
 var aria2 = new Aria2(config.aria2)
 
 function sendToAria2(feeds) {

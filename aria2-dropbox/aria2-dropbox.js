@@ -2,10 +2,11 @@
 
 const spawn = require('child_process').spawn
 const fs = require('fs')
+const path = require('path')
 const TaskPool = require('./task-pool.js')
 const Aria2 = require('aria2')
 
-var config = JSON.parse(fs.readFileSync('./conf.json', 'utf8'))
+var config = JSON.parse(fs.readFileSync(path.join(__dirname,'conf.json'), 'utf8'))
 
 var aria2 = new Aria2(config.aria2)
 
