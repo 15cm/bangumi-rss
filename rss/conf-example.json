@@ -1,0 +1,8 @@
+{
+  "aria2": {
+    "host": "yourip",
+    "port": 6800,
+    "secret": "",
+    "path": "/jsonrpc"
+  }
+}

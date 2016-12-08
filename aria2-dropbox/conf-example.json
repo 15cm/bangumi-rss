@@ -1,0 +1,10 @@
+{
+  "aria2": {
+    "host": "localhost",
+    "port": "6800",
+    "secret": "",
+    "path": "/jsonrpc"
+  },
+  "aria2DownloadPath": "path/to/aria2-download",
+  "dropboxUploaderPath": "path/to/dropbox_uploader.sh"
+}
