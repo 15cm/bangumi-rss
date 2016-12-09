@@ -36,7 +36,7 @@ const argv = require('yargs')
       .command('schedule [cron] [option]',
                'Schedule job of checking all new feeds with cron format(Default: check every 30 min)',
                {
-                 cron: { default:  "* /30 * * * *" }
+                 cron: { default:  "*/30 * * * *" }
                },
                argv => {
                  var isDownload = !argv.nd
