@@ -26,9 +26,9 @@ var dropboxUpload = (files) => {
     const fname = path.substring(path.lastIndexOf('/') + 1)
     const ext = fname.substring(fname.indexOf('.') + 1)
     if (files.length > 1 || (/\[METADATA\].*/.exec(fname) == null && /.*(torrent|html).*/.exec(ext) == null)) {
+      console.log('Uploading ' + fname + ' to dropbox...')
       let output = ''
       const dupload = spawn(dropbox, ['upload', path, '/'])
-      console.log('Uploading ' + fname + ' to dropbox...')
       dupload.stdout.on('data', (data) => {
         output += data
       })
