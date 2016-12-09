@@ -32,9 +32,11 @@ It is a substitute for btsync because in China, dropbox works quite well with pr
   cd bangumi-rss
   npm install
   ln -s $(pwd)/rss/bamgumi-rss.js /usr/local/bin/bangumi-rss #For *nix. alias ok as well
+  # Modify rss/conf-example.json and aria2-dropbox/conf-example.json.
+  mv rss/conf-example.json rss/conf.json
+  mv aria2-dropbox/conf-example.json aria2-dropbox/conf.json
 #+END_SRC
 ** Usage
-Modify ~rss/conf-example.json~ and ~aria2-dropbox/conf-example.json~. Then rename them to ~conf.json~.
 *** Bangumi RSS
 Just run ~rss/bangumi-rss.js help~ or ~bangumi-rss help~
 
