@@ -20,10 +20,10 @@ class TaskPool {
         console.log('-------------------------------------------')
         console.log(output)
         console.log('-------------------------------------------\n')
-        console.log('Task finish.' + this._cnt + ' task running...')
+        console.log('Task finished.', this._cnt ,' task running...')
         this.check()
       }).catch((err) => {
-        console.log("Error with task: " + err)
+        console.log('Error with task:', err)
         this._cnt -= 1
         this.check()
       })
