@@ -16,54 +16,53 @@ const download_path = config.aria2DownloadPath
 // Only 4 running dropboxuploader.sh are allowed
 var pool = new TaskPool(4)
 
-var dropboxUpload = (files) => {
-  return new Promise((resolve, reject) => {
-    let path = files[0]['path']
-    if(files.length > 1) {
-      let p = path.indexOf('/', download_path.length + 1)
-      path = path.substring(0, p)
-    }
-    const fname = path.substring(path.lastIndexOf('/') + 1)
-    const ext = fname.substring(fname.indexOf('.') + 1)
-    if (files.length > 1 || (/\[METADATA\].*/.exec(fname) == null && /.*(torrent|html).*/.exec(ext) == null)) {
-      console.log('Uploading ' + fname + ' to dropbox...')
-      let output = ''
-      const dupload = spawn(dropbox, ['upload', path, '/'])
-      dupload.stdout.on('data', (data) => {
-        output += data
-      })
-      dupload.on('error', (err) => {
-        reject(err)
-      })
-      dupload.on('close', (code) => {
-        if (code == 0) {
-          output += (`\nDropbox upload ${path} successfully`)
-          const rm = spawn('rm', ['-r',  path])
-          rm.on('close', (code) => {
-            if (code == 0) {
-              output += `\nrm ${path} successfully`
-              resolve(output)
-            } else {
-              reject(`rm ${path} failed with code: ${code}`)
-            }
-          })
-        } else {
-          reject(`Dropbox upload "${path}" exit with ${code}`)
-        }
-      })
-    }
+var dropboxUpload = (gid) => {
+  return aria2.getFiles(gid).then((files) => {
+    return new Promise((resolve, reject) => {
+      let path = files[0]['path']
+      if(files.length > 1) {
+        let p = path.indexOf('/', download_path.length + 1)
+        path = path.substring(0, p)
+      }
+      let fname = path.substring(path.lastIndexOf('/') + 1)
+      let ext = fname.substring(fname.indexOf('.') + 1)
+      if (files.length > 1 || (/\[METADATA\].*/.exec(fname) == null && /.*(torrent|html).*/.exec(ext) == null)) {
+        console.log(`${gid}: Uploading ${fname} + to dropbox...`)
+        let output = ''
+        const dupload = spawn(dropbox, ['upload', path, '/'])
+        dupload.stdout.on('data', (data) => {
+          output += data
+        })
+        dupload.on('error', (err) => {
+          reject(err)
+        })
+        dupload.on('close', (code) => {
+          if (code == 0) {
+            output += (`\nDropbox upload ${path} successfully`)
+            const rm = spawn('rm', ['-r',  path])
+            rm.on('close', (code) => {
+              if (code == 0) {
+                output += `\nrm ${path} successfully`
+                resolve(output)
+              } else {
+                reject(`rm ${path} failed with code: ${code}`)
+              }
+            })
+          } else {
+            reject(`Dropbox upload "${path}" exit with ${code}`)
+          }
+        })
+      } else {
+        resolve(`${gid}: METADATA or Torrent`)
+      }
+    })
   })
 }
 
 aria2.onDownloadComplete = ({
   gid
 }) => {
-  console.log(gid)
-  aria2.getFiles(gid).then((files) => {
-    pool.apply(dropboxUpload, files)
-  }).catch((err) => {
-    console.log(err)
-  })
+  pool.apply(dropboxUpload, gid)
 }
 
 aria2.open().then(() => {
