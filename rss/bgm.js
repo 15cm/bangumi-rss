@@ -99,16 +99,19 @@ function checkAll() {
 // List all bgm infos and latest bangumi title
 function listAll() {
   var bgms = db.get('bgms').map(({name, rss, feeds}) => {
+    let feed = feeds.length > 0 ? feeds[0] : {title: 'Yet', addedAt: 'Yet'}
     return {
       name,
       rss,
-      latest: feeds.length > 0 ? feeds[0].title : 'Yet'
+      latest: feed.title,
+      addedAt: feed.addedAt
     }
   })
-  for(let {name, rss, latest} of bgms) {
-    print(`Name  : ${name}`)
-    print(`RSS   : ${rss}`)
-    print(`Latest: ${latest}`)
+  for(let {name, rss, latest, addedAt} of bgms) {
+    print(`Name   : ${name}`)
+    print(`RSS    : ${rss}`)
+    print(`Latest : ${latest}`)
+    print(`AddedAt: ${addedAt}`)
     print()
   }
 }
