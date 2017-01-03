@@ -88,12 +88,14 @@ function check(bgmId) {
   return new Promise((resolve, reject) => {
     if(db.get('bgms').findIndex({ id: bgmId }).value() < 0)
       reject(`Bangumi "${bgmId}" not found. Use 'bgm-rss list' to show bangumis`)
-    var rssUrl = db.get('bgms').find({id: bgmId}).get('rss').value()
+    var findBgmById = db.get('bgms').find({id: bgmId})
+    var rssUrl = findBgmById.get('rss').value()
+    var bgmName = findBgmById.get('name').value()
     request(rssUrl, (err, res, body) => {
       if(err || res.statusCode != 200)
         reject(`${res.statusCode}: ${err}`)
       var newFeeds = update(bgmId, parseFeedsFromRss(body))
-      print(`Bangumi "${bgmId}" checked, ${newFeeds.length} new feeds found.`)
+      print(`Bangumi "${bgmName}" checked, ${newFeeds.length} new feeds found.`)
       resolve(newFeeds)
     })
   })
