@@ -10,6 +10,7 @@ const print = console.log
   Sync read & write
   db: {
     bgms: [{
+      id: Number,
       name: '',
       rss: '',
       feeds: [{
@@ -47,8 +48,10 @@ function parseFeedsFromRss(rssString) {
 function add(bgmName, rssUrl) {
   if(db.get('bgms').findIndex({name: bgmName}).value() >= 0)
     throw `Bangumi "${bgmName}" has already in list.`
+  var size = db.get('bgms').size().value()
   db.get('bgms')
     .push({
+      id: size,
       name: bgmName,
       rss: rssUrl,
       feeds: []
@@ -56,16 +59,16 @@ function add(bgmName, rssUrl) {
     .value()
 }
 
-function remove(bgmName) {
-  db.get('bgms').remove({ name: bgmName}).value()
+function remove(bgmId) {
+  db.get('bgms').remove({ id: bgmId}).value()
 }
 
 function removeall() {
   db.get('bgms').remove().value()
 }
 
-function update(bgmName, bgmInfos) {
-  var bgm = db.get('bgms').find({ name: bgmName })
+function update(bgmId, bgmInfos) {
+  var bgm = db.get('bgms').find({id: bgmId})
   var feeds = bgm.get('feeds')
   var feedTitles = feeds.map('title').value()
   var newFeeds = _.differenceWith(bgmInfos, feedTitles, (info, title) => {
@@ -81,37 +84,39 @@ function update(bgmName, bgmInfos) {
   return newFeeds
 }
 
-function check(bgmName) {
+function check(bgmId) {
   return new Promise((resolve, reject) => {
-    if(db.get('bgms').findIndex({ name: bgmName }).value() < 0)
-      reject(`Bangumi "${bgmName}" not found. Use 'bgm-rss list' to show bangumis`)
-    var rssUrl = db.get('bgms').find({ name: bgmName}).get('rss').value()
+    if(db.get('bgms').findIndex({ id: bgmId }).value() < 0)
+      reject(`Bangumi "${bgmId}" not found. Use 'bgm-rss list' to show bangumis`)
+    var rssUrl = db.get('bgms').find({id: bgmId}).get('rss').value()
     request(rssUrl, (err, res, body) => {
       if(err || res.statusCode != 200)
         reject(`${res.statusCode}: ${err}`)
-      var newFeeds = update(bgmName, parseFeedsFromRss(body))
-      print(`"${bgmName}" checked, ${newFeeds.length} new feeds found.`)
+      var newFeeds = update(bgmId, parseFeedsFromRss(body))
+      print(`Bangumi "${bgmId}" checked, ${newFeeds.length} new feeds found.`)
       resolve(newFeeds)
     })
   })
 }
 
 function checkAll() {
-  return Promise.all(db.get('bgms').map(({name}) => check(name)).value())
+  return Promise.all(db.get('bgms').map(({id}) => check(id)).value())
 }
 
 // List all bgm infos and latest bangumi title
 function listAll() {
-  var bgms = db.get('bgms').map(({name, rss, feeds}) => {
+  var bgms = db.get('bgms').map(({id, name, rss, feeds}) => {
     let feed = feeds.length > 0 ? feeds[0] : {title: 'Yet', addedAt: 'Yet'}
     return {
+      id,
       name,
       rss,
       latest: feed.title,
       addedAt: feed.addedAt
     }
   })
-  for(let {name, rss, latest, addedAt} of bgms) {
+  for(let {id, name, rss, latest, addedAt} of bgms) {
+    print(`ID:    : ${id}`)
     print(`Name   : ${name}`)
     print(`RSS    : ${rss}`)
     print(`Latest : ${latest}`)
@@ -121,10 +126,10 @@ function listAll() {
 }
 
 // Show detail of a bgm
-function list(bgmName) {
-  if(db.get('bgms').findIndex({ name: bgmName }).value() < 0)
-    throw (`Bangumi "${bgmName}" not found. Use 'bgm-rss list' to show bangumis`)
-  print(db.get('bgms').find({ name: bgmName}).value())
+function list(bgmId) {
+  if(db.get('bgms').findIndex({id: bgmId}).value() < 0)
+    throw (`Bangumi "${bgmId}" not found. Use 'bgm-rss list' to show bangumis`)
+  print(db.get('bgms').find({id: bgmId}).value())
 }
 
 exports.add = add

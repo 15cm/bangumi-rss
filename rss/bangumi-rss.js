@@ -14,27 +14,25 @@ const argv = require('yargs')
       .describe('nd', "Not download. '--nd' means not send new feeds to Aria2")
       .command('add <name> <rss>', 'Add a bangumi with rss url', {}, argv => bgm.add(argv.name, argv.rss))
       .example(`${NAME} add oc9 'https://www.nyaa.se/?page=rss&term=Horriblesubs+Occultic;Nine+(1080p)'`)
-      .command('remove <name>', 'Remove a bangumi', {}, argv => bgm.remove(argv.name))
-      .example(`${NAME} remove oc9`)
-      .command('removeall', 'Remove all bangumi', {}, argv => bgm.removeall())
-      .example(`${NAME} removeall`)
-      .command('check [name] [option]', 'Check new feeds for bangumi[s]', {}, argv => {
+      .command('remove <id>', 'Remove a bangumi by id', {}, argv => bgm.remove(argv.id))
+      .example(`${NAME} remove 1`)
+      .command('check [id] [option]', 'Check new feeds for bangumi[s]', {}, argv => {
         var isDownload = !argv.nd
-        if(argv.name) {
-          checkFeed(argv.name, isDownload)
+        if(argv.id) {
+          checkFeed(argv.id, isDownload)
         } else {
           checkFeedAll(isDownload)
         }
       })
-      .example(`${NAME} check oc9`)
-      .command('list [name]', 'List infos of bangumi[s]', {}, argv => {
-        if(argv.name) {
-          bgm.list(argv.name) 
+      .example(`${NAME} check 1`)
+      .command('list [id]', 'List infos of bangumi[s]', {}, argv => {
+        if(argv.id) {
+          bgm.list(argv.id) 
         } else {
           bgm.listAll()
         }
       })
-      .example(`${NAME} list oc9`)
+      .example(`${NAME} list 1`)
       .command('schedule [cron] [option]',
                'Schedule job of checking all new feeds with cron format(Default: check every 30 min)',
                {
