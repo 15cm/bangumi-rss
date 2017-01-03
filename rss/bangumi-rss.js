@@ -16,6 +16,8 @@ const argv = require('yargs')
       .example(`${NAME} add oc9 'https://www.nyaa.se/?page=rss&term=Horriblesubs+Occultic;Nine+(1080p)'`)
       .command('remove <name>', 'Remove a bangumi', {}, argv => bgm.remove(argv.name))
       .example(`${NAME} remove oc9`)
+      .command('removeall', 'Remove all bangumi', {}, argv => bgm.removeall())
+      .example(`${NAME} removeall`)
       .command('check [name] [option]', 'Check new feeds for bangumi[s]', {}, argv => {
         var isDownload = !argv.nd
         if(argv.name) {

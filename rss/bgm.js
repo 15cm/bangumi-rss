@@ -60,6 +60,10 @@ function remove(bgmName) {
   db.get('bgms').remove({ name: bgmName}).value()
 }
 
+function removeall() {
+  db.get('bgms').remove().value()
+}
+
 function update(bgmName, bgmInfos) {
   var bgm = db.get('bgms').find({ name: bgmName })
   var feeds = bgm.get('feeds')
@@ -125,6 +129,7 @@ function list(bgmName) {
 
 exports.add = add
 exports.remove = remove
+exports.removeall = removeall
 exports.check = check
 exports.checkAll = checkAll
 exports.listAll = listAll
