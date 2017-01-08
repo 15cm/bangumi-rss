@@ -20,7 +20,7 @@ const argv = require('yargs')
       .example(`${NAME} removeall`)
       .command('check [id] [option]', 'Check new feeds for bangumi[s]', {}, argv => {
         var isDownload = !argv.nd
-        if(argv.id) {
+        if(argv.id !== undefined) {
           checkFeed(argv.id, isDownload)
         } else {
           checkFeedAll(isDownload)
@@ -28,7 +28,7 @@ const argv = require('yargs')
       })
       .example(`${NAME} check 1`)
       .command('list [id]', 'List infos of bangumi[s]', {}, argv => {
-        if(argv.id) {
+        if(argv.id !== undefined) {
           bgm.list(argv.id) 
         } else {
           bgm.listAll()
