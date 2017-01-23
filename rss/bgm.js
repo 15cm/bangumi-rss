@@ -23,7 +23,8 @@ const print = console.log
   */
 const db = low(path.join(__dirname, 'db.json'))
 db.defaults({
-  bgms: []
+  bgms: [],
+  bgmNum: 0
 }).value()
 
 /*
@@ -48,19 +49,22 @@ function parseFeedsFromRss(rssString) {
 function add(bgmName, rssUrl) {
   if(db.get('bgms').findIndex({name: bgmName}).value() >= 0)
     throw `Bangumi "${bgmName}" has already in list.`
-  var size = db.get('bgms').size().value()
+  var id = db.get('bgmNum').value()
   db.get('bgms')
     .push({
-      id: size,
+      id: id,
       name: bgmName,
       rss: rssUrl,
       feeds: []
     })
     .value()
+  db.set('bgmNum', id + 1).value()
 }
 
 function remove(bgmId) {
   db.get('bgms').remove({ id: bgmId}).value()
+  bgmNumOld = db.get('bgmNum').value()
+  db.set('bgmNum', bgmNumOld - 1).value()
 }
 
 function removeall() {
